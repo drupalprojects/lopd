@@ -4,6 +4,13 @@ define('LOPD_OPERATION_LOGIN', 'login');
 define('LOPD_OPERATION_LOGOUT', 'logout');
 
 /**
+ * Implementation of hook_perm().
+ */
+function lopd_perm() {
+  return array('access LOPD data');
+}
+
+/**
  * Implementation of hook_user().
  */
 function lopd_user($op, &$edit, &$account, $category = NULL) {
