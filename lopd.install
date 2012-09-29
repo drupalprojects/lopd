@@ -46,6 +46,9 @@ function lopd_schema() {
         )
       ),
     ),
+    'indexes' => array(
+      'uid' => array('uid'),
+    ),
     'primary key' => array('lopdid'),
   );
   return $schema;
