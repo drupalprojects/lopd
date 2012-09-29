@@ -1,0 +1,29 @@
+<?php
+
+define('LOPD_OPERATION_LOGIN', 'login');
+define('LOPD_OPERATION_LOGOUT', 'logout');
+
+/**
+ * Implementation of hook_user().
+ */
+function lopd_user($op, &$edit, &$account, $category = NULL) {
+  switch($op) {
+    case 'login':
+      lopd_register_operation($account, LOPD_OPERATION_LOGIN);
+      break;
+    case 'logout':
+      lopd_register_operation($account, LOPD_OPERATION_LOGOUT);
+      break;
+    default:
+      break;
+  }
+}
+
+function lopd_register_operation($user, $operation) {
+  $data = array(
+    'uid' => $user->uid,
+    'operation' => $operation,
+    'timestamp' => time(),
+  );
+  drupal_write_record('lopd', $data);
+}
