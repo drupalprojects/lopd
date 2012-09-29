@@ -38,6 +38,14 @@ function lopd_schema() {
         'default' => ''
       ),
     ),
+    'foreign_keys' => array(
+      'uid' => array(
+        'table' => 'user',
+        'columns' => array(
+          'uid' => 'uid',
+        )
+      ),
+    ),
     'primary key' => array('lopdid'),
   );
   return $schema;
