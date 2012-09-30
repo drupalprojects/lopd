@@ -1,8 +1,10 @@
 <?php
 
 /**
- * Implementation of hook_views_data()
+ * @file
+ * Views interface for Spain LOPD.
  */
+
 function lopd_views_data() {
   $data = array();
   $data['lopd']['table'] = array(

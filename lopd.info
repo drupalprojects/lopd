@@ -1,2 +1,5 @@
 name = Spain LOPD
-core = 6.x
+description = Implements some aspects that helps your site to be compliant to the Spanish LOPD Law about personal data management.
+package = LOPD
+core = 7.x
+version = 7.x-1.x-dev
