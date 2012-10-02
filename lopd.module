@@ -16,11 +16,52 @@ define('LOPD_OPERATION_LOGOUT', 'logout');
  */
 function lopd_permission() {
   return array(
+    'config LOPD module' => array(
+      'title' => t('Config Spain LOPD module'), 
+      'description' => t('Allows users to config Spain LOPD module.'),
+    ),
     'access LOPD data' => array(
       'title' => t('Access LOPD data'), 
       'description' => t('View report of registered events.'),
     ),
   );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function lopd_menu() {
+  $items['admin/config/system/lopd'] = array(
+    'title' => 'Spain LOPD',
+    'description' => 'Administer Spain LOPD module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lopd_admin_settings_form'),
+    'access arguments' => array('config LOPD module'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Form for Spain LOPD module settings configuration.
+ */
+function lopd_admin_settings_form() {
+  $form['lopd_messages_to_keep'] = array(
+      '#type' => 'select',
+      '#title' => t('Database log messages to keep'),
+      '#description' => t('The maximum number of messages to keep in the database log.'),
+      '#default_value' => variable_get('lopd_messages_to_keep', 0),
+      '#options' => array(
+        '0' => t('All'),
+        '2' => t('@count Years old', array('@count' => 2)),
+        '3' => t('@count Years old', array('@count' => 3)),
+        '4' => t('@count Years old', array('@count' => 4)),
+        '5' => t('@count Years old', array('@count' => 5)),
+      ),
+  );
+
+  return system_settings_form($form);
 }
 
 /**
@@ -60,4 +101,19 @@ function lopd_views_api() {
     'api' => 3,
     'path' => drupal_get_path('module', 'lopd') . '/includes/views'
   );
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Remove expired log messages.
+ */
+function lopd_cron() {
+  // Cleanup the lopd table.
+  $years = variable_get('lopd_messages_to_keep', 0);
+  if ($years > 0 ) {
+    db_delete('lopd')
+      ->condition('timestamp', time() - time($years * 365,25 * 24 * 60 * 60), '<')
+      ->execute();
+  }
 }
