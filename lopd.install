@@ -30,6 +30,20 @@ function lopd_schema() {
         'not null' => TRUE,
         'default' => 0
       ),
+      'authname' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Authentication name that did this operation.',
+      ),
+      'ip' => array(
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'IP address that did this operation.',
+      ),
       'operation' => array(
         'description' => 'The operation that was recorded.',
         'type' => 'varchar',
@@ -59,4 +73,27 @@ function lopd_schema() {
  */
 function lopd_uninstall() {
   drupal_uninstall_schema('lopd');
+}
+
+/**
+ * Add authname and ip to lopd table.
+ */
+function lopd_update_7100(&$sandbox) {
+  // Add {authname}.lopd to store the Authentication name.
+  db_add_field('lopd', 'authname', array(
+    'type' => 'varchar',
+    'length' => 128,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Authentication name that did this operation.',
+  ));
+
+  // Add {ip}.lopd to store the IP address.
+  db_add_field('lopd', 'ip', array(
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'IP address that did this operation.',
+  ));
 }

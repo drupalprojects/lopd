@@ -70,16 +70,26 @@ function lopd_views_default_views() {
   $handler->display->display_options['fields']['timestamp']['table'] = 'lopd';
   $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
   $handler->display->display_options['fields']['timestamp']['label'] = 'Timestamp';
-  /* Field: User: Name */
-  $handler->display->display_options['fields']['name']['id'] = 'name';
-  $handler->display->display_options['fields']['name']['table'] = 'users';
-  $handler->display->display_options['fields']['name']['field'] = 'name';
-  $handler->display->display_options['fields']['name']['relationship'] = 'uid';
   /* Field: LOPD: Operación */
   $handler->display->display_options['fields']['operation']['id'] = 'operation';
   $handler->display->display_options['fields']['operation']['table'] = 'lopd';
   $handler->display->display_options['fields']['operation']['field'] = 'operation';
   $handler->display->display_options['fields']['operation']['label'] = 'Operation';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['relationship'] = 'uid';
+  $handler->display->display_options['fields']['name']['label'] = 'User';
+  /* Field: LOPD: Nombre */
+  $handler->display->display_options['fields']['authname']['id'] = 'authname';
+  $handler->display->display_options['fields']['authname']['table'] = 'lopd';
+  $handler->display->display_options['fields']['authname']['field'] = 'authname';
+  $handler->display->display_options['fields']['authname']['label'] = 'Authname';
+  /* Field: LOPD: IP */
+  $handler->display->display_options['fields']['ip']['id'] = 'ip';
+  $handler->display->display_options['fields']['ip']['table'] = 'lopd';
+  $handler->display->display_options['fields']['ip']['field'] = 'ip';
 
   /* Display: LOPD report page */
   $handler = $view->new_display('page', 'LOPD report page', 'page_lopd_report');
@@ -110,8 +120,9 @@ function lopd_views_default_views() {
     t('User'),
     t('LOPD ID'),
     t('Timestamp'),
-    t('Name'),
     t('Operation'),
+    t('Authname'),
+    t('IP'),
     t('LOPD report page'),
   );
 

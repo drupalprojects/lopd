@@ -50,7 +50,6 @@ function lopd_views_data() {
     ),
   );
 
-
   $data['lopd']['uid'] = array(
     'title' => t('User'),
     'help' => t('User that did the operation.'),
@@ -61,8 +60,40 @@ function lopd_views_data() {
       'label' => t('User'),
     ),
   );
-
-  // Example plain text field.
+  $data['lopd']['authname'] = array(
+    'title' => t('Name'),
+    'help' => t('Authentication name that did this operation.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+  $data['lopd']['ip'] = array(
+    'title' => t('IP'),
+    'help' => t('IP address that did this operation.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
   $data['lopd']['operation'] = array(
     'title' => t('Operation'),
     'help' => t('Operation that has been registered.'),
