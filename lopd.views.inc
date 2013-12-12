@@ -1,4 +1,8 @@
 <?php
+/**
+* @file
+* Contains default views for the Spain LOPD module.
+*/
 
 /**
  * Implementation of hook_views_data()
@@ -57,6 +61,42 @@ function lopd_views_data() {
       'base field' => 'uid',
       'handler' => 'views_handler_relationship',
       'label' => t('User'),
+    ),
+  );
+
+  $data['lopd']['authname'] = array(
+    'title' => t('Name'),
+    'help' => t('Authentication name that did this operation.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['lopd']['ip'] = array(
+    'title' => t('IP'),
+    'help' => t('IP address that did this operation.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
     ),
   );
 

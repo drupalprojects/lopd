@@ -2,6 +2,7 @@
 
 define('LOPD_OPERATION_LOGIN', 'login');
 define('LOPD_OPERATION_LOGOUT', 'logout');
+define('LOPD_OPERATION_LOGIN_FAILED', 'failed_login');
 
 /**
  * Implementation of hook_perm().
@@ -11,10 +12,42 @@ function lopd_perm() {
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function lopd_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_login':
+    case 'user_login_block':
+      // Add validation for detect login attempts.
+      $form['#validate'][] = 'lopd_login_validate';
+      break;
+  }
+}
+
+/**
+ * Check validation for login attemps.
+ */
+function lopd_login_validate($form, &$form_state) {
+  global $user;
+
+  if (empty($user->uid)) {
+    $account = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", array($form_state['values']['name'])));
+    if ($account) {
+      lopd_register_operation($account, LOPD_OPERATION_LOGIN_FAILED);
+    }
+    else {
+      $account['uid'] = 0;
+      $account['name'] = $form_state['values']['name'];
+      lopd_register_operation((object) $account, LOPD_OPERATION_LOGIN_FAILED);
+    }
+  }
+}
+
+/**
  * Implementation of hook_user().
  */
 function lopd_user($op, &$edit, &$account, $category = NULL) {
-  switch($op) {
+  switch ($op) {
     case 'login':
       lopd_register_operation($account, LOPD_OPERATION_LOGIN);
       break;
@@ -35,6 +68,8 @@ function lopd_user($op, &$edit, &$account, $category = NULL) {
 function lopd_register_operation($user, $operation) {
   $data = array(
     'uid' => $user->uid,
+    'authname' => $user->name,
+    'ip' => ip_address(),
     'operation' => $operation,
     'timestamp' => time(),
   );
@@ -50,3 +85,4 @@ function lopd_views_api() {
     'path' => drupal_get_path('module', 'lopd'),
   );
 }
+
