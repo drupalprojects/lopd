@@ -97,3 +97,17 @@ function lopd_update_7100(&$sandbox) {
     'description' => 'IP address that did this operation.',
   ));
 }
+
+/**
+ * Update length of {ip}.lopd database field.
+ */
+function lopd_update_7101(&$sandbox) {
+  // Change {ip}.lod size to 40
+  db_change_field('lopd', 'ip', 'ip', array(
+    'type' => 'varchar',
+    'length' => 40,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'IP address that did this operation.',
+  ));
+}
