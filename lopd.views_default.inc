@@ -275,6 +275,7 @@ function lopd_views_default_views() {
     'default' => '-1',
   ));
   $handler = $view->new_display('page', 'LOPD report page', 'page_lopd_report');
+  $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'admin/reports/lopd');
   $handler->override_option('menu', array(
     'type' => 'normal',
