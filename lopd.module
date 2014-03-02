@@ -146,7 +146,7 @@ function lopd_cron() {
   $years = variable_get('lopd_messages_to_keep', 0);
   if ($years > 0 ) {
     db_delete('lopd')
-      ->condition('timestamp', time() - time($years * 365,25 * 24 * 60 * 60), '<')
+      ->condition('timestamp', strtotime('-' . $years . 'years'), '<')
       ->execute();
   }
 }
