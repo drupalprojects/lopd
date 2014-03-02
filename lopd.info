@@ -2,4 +2,5 @@ name = Spain LOPD
 description = Implements some aspects that helps your site to be compliant to the Spanish LOPD Law about personal data management.
 package = LOPD
 configure = admin/config/system/lopd
+files[] = lopd.test
 core = 7.x
