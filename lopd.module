@@ -29,43 +29,6 @@ function lopd_permission() {
 }
 
 /**
- * Implements hook_menu().
- */
-function lopd_menu() {
-  $items['admin/config/system/lopd'] = array(
-    'title' => 'Spain LOPD',
-    'description' => 'Administer Spain LOPD module.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('lopd_admin_settings_form'),
-    'access arguments' => array('config LOPD module'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-
-  return $items;
-}
-
-/**
- * Form for Spain LOPD module settings configuration.
- */
-function lopd_admin_settings_form() {
-  $form['lopd_messages_to_keep'] = array(
-      '#type' => 'select',
-      '#title' => t('Database log messages to keep'),
-      '#description' => t('The maximum number of messages to keep in the database log.'),
-      '#default_value' => variable_get('lopd_messages_to_keep', 0),
-      '#options' => array(
-        '0' => t('All'),
-        '2' => t('@count Years old', array('@count' => 2)),
-        '3' => t('@count Years old', array('@count' => 3)),
-        '4' => t('@count Years old', array('@count' => 4)),
-        '5' => t('@count Years old', array('@count' => 5)),
-      ),
-  );
-
-  return system_settings_form($form);
-}
-
-/**
  * Implements hook_user_login().
  */
 function lopd_user_login(&$edit, $account) {
