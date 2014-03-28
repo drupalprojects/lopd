@@ -4,6 +4,7 @@
  * @file
  * Implements some aspects that helps your site to be compliant to the Spanish LOPD Law about personal data management.
  */
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * OPERATIONS
@@ -31,14 +32,14 @@ function lopd_permission() {
 /**
  * Implements hook_user_login().
  */
-function lopd_user_login(&$edit, $account) {
+function lopd_user_login(AccountProxyInterface $account) {
   lopd_register_operation($account, LOPD_OPERATION_LOGIN);
 }
 
 /**
  * Implements hook_user_logout().
  */
-function lopd_user_logout($account) {
+function lopd_user_logout(AccountProxyInterface $account) {
   lopd_register_operation($account, LOPD_OPERATION_LOGOUT);
 }
 
@@ -75,14 +76,16 @@ function lopd_login_validate($form, &$form_state) {
 /**
  * Registers an operation.
  *
- * @param type $user An user object.
- * @param type $operation The operation being registered.
+ * @param AccountProxyInterface $user
+ *   An user object.
+ * @param type $operation
+ *   The operation being registered.
  */
-function lopd_register_operation($user, $operation) {
+function lopd_register_operation(AccountProxyInterface $user, $operation) {
   $data = array(
-    'uid' => $user->uid,
-    'authname' => $user->name,
-    'ip' => ip_address(),
+    'uid' => $user->id(),
+    'authname' => $user->getUsername(),
+    'ip' => \Drupal::request()->getClientIp(),
     'operation' => $operation,
     'timestamp' => time(),
   );
