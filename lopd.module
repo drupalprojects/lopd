@@ -93,23 +93,13 @@ function lopd_register_operation(AccountProxyInterface $user, $operation) {
 }
 
 /**
- * Implements hook_views_api().
- */
-function lopd_views_api() {
-  return array(
-    'api' => 3,
-    'path' => drupal_get_path('module', 'lopd') . '/includes/views'
-  );
-}
-
-/**
  * Implements hook_cron().
  *
  * Remove expired log messages.
  */
 function lopd_cron() {
   // Cleanup the lopd table.
-  $years = variable_get('lopd_messages_to_keep', 0);
+  $years = \Drupal::config('lopd.settings')->get('messages_to_keep');
   if ($years > 0 ) {
     db_delete('lopd')
       ->condition('timestamp', strtotime('-' . $years . 'years'), '<')
