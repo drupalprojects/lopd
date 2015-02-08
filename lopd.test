@@ -30,6 +30,8 @@ class LopdTestCase extends DrupalWebTestCase {
    *  - Login.
    *  - Logout.
    *  - Failed login.
+   *  - New user (register).
+   *  - Delete user.
    */
   public function testOperations() {
     // Check failed_login operation:
@@ -50,6 +52,16 @@ class LopdTestCase extends DrupalWebTestCase {
     $this->drupalLogout($this->normal_user);
     $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
     $this->checkOperation($lopd_entry, LOPD_OPERATION_LOGOUT);
+
+    // Check new user operation:
+    $new_user = $this->drupalCreateUser();
+    $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
+    $this->checkOperation($lopd_entry, LOPD_OPERATION_REGISTER);
+
+    // Check user delete operation:
+    user_delete($new_user->uid);
+    $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
+    $this->checkOperation($lopd_entry, LOPD_OPERATION_DELETE);
   }
 
   public function testDeleteLopdEntriesWithCron() {

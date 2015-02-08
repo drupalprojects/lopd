@@ -11,6 +11,8 @@
 define('LOPD_OPERATION_LOGIN', 'login');
 define('LOPD_OPERATION_LOGOUT', 'logout');
 define('LOPD_OPERATION_LOGIN_FAILED', 'failed_login');
+define('LOPD_OPERATION_REGISTER', 'register');
+define('LOPD_OPERATION_DELETE', 'delete');
 
 /**
  * Implements hook_permission().
@@ -77,6 +79,20 @@ function lopd_user_login(&$edit, $account) {
  */
 function lopd_user_logout($account) {
   lopd_register_operation($account, LOPD_OPERATION_LOGOUT);
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function lopd_user_insert(&$edit, $account, $category) {
+  lopd_register_operation($account, LOPD_OPERATION_REGISTER);
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function lopd_user_delete($account) {
+  lopd_register_operation($account, LOPD_OPERATION_DELETE);
 }
 
 /**
