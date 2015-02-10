@@ -109,7 +109,7 @@ class LopdTestCase extends DrupalWebTestCase {
       ->fields('l')
       ->orderBy('l.lopdid', 'DESC');
     if (!empty($operation)) {
-      $query->codition('l.operation', $operation);
+      $query->condition('l.operation', $operation);
     }
     if (!empty($limit)) {
       $query->range(0, $limit);
