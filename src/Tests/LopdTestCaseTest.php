@@ -7,6 +7,7 @@
 namespace Drupal\lopd\Tests;
 
 use Drupal\simpletest\WebTestBase;
+use Drupal\lopd\LopdServiceInterface;
 use Drupal\lopd\Tests\Stub\LopdTestTrait;
 
 /**
@@ -68,17 +69,17 @@ class LopdTestCaseTest extends WebTestBase {
 
     $this->drupalPostForm('user', $edit, 'Log in');
     $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
-    $this->checkOperation($lopd_entry, LOPD_OPERATION_LOGIN_FAILED);
+    $this->checkOperation($lopd_entry, LopdServiceInterface::LOPD_OPERATION_LOGIN_FAILED);
 
     // Check login operation:
     $this->drupalLogin($this->normal_user);
     $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
-    $this->checkOperation($lopd_entry, LOPD_OPERATION_LOGIN);
+    $this->checkOperation($lopd_entry, LopdServiceInterface::LOPD_OPERATION_LOGIN);
 
     // Check logout operation:
     $this->drupalLogout($this->normal_user);
     $lopd_entry = $this->getLOPDEntries('', 1)->fetchObject();
-    $this->checkOperation($lopd_entry, LOPD_OPERATION_LOGOUT);
+    $this->checkOperation($lopd_entry, LopdServiceInterface::LOPD_OPERATION_LOGOUT);
   }
 
 }

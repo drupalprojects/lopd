@@ -6,28 +6,21 @@
  */
 
 /**
- * OPERATIONS
- */
-define('LOPD_OPERATION_LOGIN', 'login');
-define('LOPD_OPERATION_LOGOUT', 'logout');
-define('LOPD_OPERATION_LOGIN_FAILED', 'failed_login');
-
-/**
  * Implements hook_user_login().
  */
 function lopd_user_login(\Drupal\user\UserInterface $account) {
-  lopd_register_operation($account, LOPD_OPERATION_LOGIN);
+  \Drupal::service('lopd.operation')->lopdRegisterLogin($account);
 }
 
 /**
  * Implements hook_user_logout().
  */
 function lopd_user_logout(Drupal\Core\Session\AccountProxyInterface $account) {
-  lopd_register_operation($account, LOPD_OPERATION_LOGOUT);
+  \Drupal::service('lopd.operation')->lopdRegisterLogout($account);
 }
 
 /**
- * Login attemps failed.
+ * Login attempts failed.
  */
 function lopd_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   switch ($form_id) {
@@ -41,56 +34,15 @@ function lopd_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_stat
 }
 
 /**
- * Check validation for login attemps.
+ * Check validation for login attempts.
 */
 function lopd_login_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
-  if (empty($form_state->getStorage()['uid'])) {
-    // The validation failed, we have to register the login attempt.
-    $db = \Drupal::database();
-    $account = $db->query('SELECT * FROM {users_field_data} WHERE name = :name',
-    [':name' => $form_state->getValue('name')])->fetchObject();
-
-    if (!empty($account)) {
-      lopd_register_operation($account, LOPD_OPERATION_LOGIN_FAILED);
-    }
-    else {
-      $account['uid'] = 0;
-      $account['name'] = $form_state->getValue('name');
-      lopd_register_operation((object)$account, LOPD_OPERATION_LOGIN_FAILED);
-    }
-  }
-
-}
-/**
- * Registers an operation.
- *
- * @param AccountProxyInterface $user
- *   An user object.
- * @param type $operation
- *   The operation being registered.
- */
-function lopd_register_operation($user, $operation) {
-  \Drupal::database()->insert('lopd')
-      ->fields(array(
-          'uid' => method_exists($user, 'id') ? $user->id() : $user->uid,
-          'authname' => method_exists($user, 'getAccountName') ? $user->getAccountName() : $user->name,
-          'ip' => \Drupal::request()->getClientIp(),
-          'operation' => $operation,
-          'timestamp' => time()))
-      ->execute();
+  \Drupal::service('lopd.operation')->lopdRegisterValidationAttempt($form_state);
 }
 
 /**
  * Implements hook_cron().
- *
- * Remove expired log messages.
  */
 function lopd_cron() {
-  // Cleanup the lopd table.
-  $years = \Drupal::config('lopd.settings')->get('messages_to_keep');
-  if ($years > 0 ) {
-    db_delete('lopd')
-      ->condition('timestamp', strtotime('-' . $years . 'years'), '<')
-      ->execute();
-  }
+  \Drupal::service('lopd.operation')->lopdDeleteRegisters();
 }
