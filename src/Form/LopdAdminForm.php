@@ -1,33 +1,39 @@
 <?php
-
 /**
  * @file
- * Cointains Drupal\lopd\Form\LopdAdminForm.
+ * Contains \Drupal\lopd\Form\LopdAdminForm
  */
-
 namespace Drupal\lopd\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class LopdAdminForm
- * @package Drupal\lopd\Form
- * Provide a admin settings form for LOPD module.
+ * Configure hello settings for this site.
  */
 class LopdAdminForm extends ConfigFormBase {
-
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'lopd_admin_form';
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  protected function getEditableConfigNames() {
+    return [
+      'lopd.settings',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('lopd.settings');
+
     $form['messages_to_keep'] = array(
       '#type' => 'select',
       '#title' => t('Database log messages to keep'),
@@ -46,12 +52,13 @@ class LopdAdminForm extends ConfigFormBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('lopd.settings')
-      ->set('messages_to_keep', $form_state['values']['messages_to_keep'])
+      ->set('messages_to_keep', $form_state->getValue('messages_to_keep'))
       ->save();
-    parent::buildForm($form, $form_state);
+
+    parent::submitForm($form, $form_state);
   }
-} 
+}

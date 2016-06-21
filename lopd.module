@@ -4,7 +4,6 @@
  * @file
  * Implements some aspects that helps your site to be compliant to the Spanish LOPD Law about personal data management.
  */
-use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * OPERATIONS
@@ -14,65 +13,54 @@ define('LOPD_OPERATION_LOGOUT', 'logout');
 define('LOPD_OPERATION_LOGIN_FAILED', 'failed_login');
 
 /**
- * Implements hook_permission().
- */
-function lopd_permission() {
-  return array(
-    'config LOPD module' => array(
-      'title' => t('Config Spain LOPD module'),
-      'description' => t('Allows users to config Spain LOPD module.'),
-    ),
-    'access LOPD data' => array(
-      'title' => t('Access LOPD data'),
-      'description' => t('View report of registered events.'),
-    ),
-  );
-}
-
-/**
  * Implements hook_user_login().
  */
-function lopd_user_login(AccountProxyInterface $account) {
+function lopd_user_login(\Drupal\user\UserInterface $account) {
   lopd_register_operation($account, LOPD_OPERATION_LOGIN);
 }
 
 /**
  * Implements hook_user_logout().
  */
-function lopd_user_logout(AccountProxyInterface $account) {
+function lopd_user_logout(Drupal\Core\Session\AccountProxyInterface $account) {
   lopd_register_operation($account, LOPD_OPERATION_LOGOUT);
 }
 
 /**
  * Login attemps failed.
  */
-function lopd_form_alter(&$form, $form_state, $form_id) {
+function lopd_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   switch ($form_id) {
-    case 'user_login':
+    case 'user_login_form':
     case 'user_login_block':
       // Add validation for detect login attempts.
       $form['#validate'][] = 'lopd_login_validate';
       break;
   }
+
 }
 
 /**
  * Check validation for login attemps.
- */
-function lopd_login_validate($form, &$form_state) {
-  if (empty($form_state['uid'])) {
-    $account = db_query("SELECT * FROM {users} WHERE name = :name", array(':name' => $form_state['values']['name']))->fetchObject();
-    if ($account) {
+*/
+function lopd_login_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  if (empty($form_state->getStorage()['uid'])) {
+    // The validation failed, we have to register the login attempt.
+    $db = \Drupal::database();
+    $account = $db->query('SELECT * FROM {users_field_data} WHERE name = :name',
+    [':name' => $form_state->getValue('name')])->fetchObject();
+
+    if (!empty($account)) {
       lopd_register_operation($account, LOPD_OPERATION_LOGIN_FAILED);
     }
     else {
       $account['uid'] = 0;
-      $account['name'] = $form_state['values']['name'];
-      lopd_register_operation((object) $account, LOPD_OPERATION_LOGIN_FAILED);
+      $account['name'] = $form_state->getValue('name');
+      lopd_register_operation((object)$account, LOPD_OPERATION_LOGIN_FAILED);
     }
   }
-}
 
+}
 /**
  * Registers an operation.
  *
@@ -81,15 +69,15 @@ function lopd_login_validate($form, &$form_state) {
  * @param type $operation
  *   The operation being registered.
  */
-function lopd_register_operation(AccountProxyInterface $user, $operation) {
-  $data = array(
-    'uid' => $user->id(),
-    'authname' => $user->getUsername(),
-    'ip' => \Drupal::request()->getClientIp(),
-    'operation' => $operation,
-    'timestamp' => time(),
-  );
-  drupal_write_record('lopd', $data);
+function lopd_register_operation($user, $operation) {
+  \Drupal::database()->insert('lopd')
+      ->fields(array(
+          'uid' => method_exists($user, 'id') ? $user->id() : $user->uid,
+          'authname' => method_exists($user, 'getAccountName') ? $user->getAccountName() : $user->name,
+          'ip' => \Drupal::request()->getClientIp(),
+          'operation' => $operation,
+          'timestamp' => time()))
+      ->execute();
 }
 
 /**

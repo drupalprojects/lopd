@@ -8,14 +8,13 @@
 function lopd_views_data() {
   $data = array();
   $data['lopd']['table'] = array(
-    'group' => t("LOPD"),
-    'title' => t("LOPD"),
-    'help' => t("Shows LOPD operations registered."),
+    'group' => t('LOPD'),
   );
   $data['lopd']['table']['base'] = array(
     'field' => 'lopdid',
     'title' => 'LOPD registers',
     'weight' => 10,
+    'help' => t('Shows LOPD operations registered.'),
   );
 
   // This table references the {user} table.
@@ -35,18 +34,17 @@ function lopd_views_data() {
   $data['lopd']['lopdid'] = array(
     'title' => t('LOPD ID'),
     'help' => t('The LOPD ID of the register.'), // The help that appears on the UI,
-    // Information for displaying the nid
+    // Information for displaying the lopdid
     'field' => array(
-      'handler' => 'views_handler_field_node',
-      'click sortable' => TRUE,
+      'id' => 'numeric',
     ),
-    // Information for accepting a nid as a filter
+    // Information for accepting a lopdid as a filter
     'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
+      'id' => 'numeric',
     ),
-    // Information for sorting on a nid.
+    // Information for sorting on a lopdid.
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'id' => 'standard',
     ),
   );
 
@@ -54,76 +52,77 @@ function lopd_views_data() {
     'title' => t('User'),
     'help' => t('User that did the operation.'),
     'relationship' => array(
+      'title' => t('User'),
+      'help' => t('The user on which the log entry as written.'),
       'base' => 'users',
       'base field' => 'uid',
-      'handler' => 'views_handler_relationship',
-      'label' => t('User'),
+      'id' => 'standard',
     ),
   );
   $data['lopd']['authname'] = array(
     'title' => t('Name'),
     'help' => t('Authentication name that did this operation.'),
     'field' => array(
-      'handler' => 'views_handler_field',
-      'click sortable' => TRUE,
+      'id' => 'standard',
     ),
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'id' => 'standard',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_string',
+      'id' => 'string',
     ),
     'argument' => array(
-      'handler' => 'views_handler_argument_string',
+      'id' => 'string',
     ),
   );
   $data['lopd']['ip'] = array(
     'title' => t('IP'),
     'help' => t('IP address that did this operation.'),
     'field' => array(
-      'handler' => 'views_handler_field',
-      'click sortable' => TRUE,
+      'id' => 'standard',
     ),
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'id' => 'standard',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_string',
+      'id' => 'string',
     ),
     'argument' => array(
-      'handler' => 'views_handler_argument_string',
+      'id' => 'string',
     ),
   );
   $data['lopd']['operation'] = array(
     'title' => t('Operation'),
     'help' => t('Operation that has been registered.'),
     'field' => array(
-      'handler' => 'views_handler_field',
-      'click sortable' => TRUE,
+      'id' => 'standard',
     ),
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'id' => 'standard',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_string',
+      'id' => 'string',
     ),
     'argument' => array(
-      'handler' => 'views_handler_argument_string',
+      'id' => 'string',
     ),
   );
   $data['lopd']['timestamp'] = array(
     'title' => t('Timestamp'),
     'help' => t('The timestamp where the operation was registered.'),
     'field' => array(
-      'handler' => 'views_handler_field_date',
-      'click sortable' => TRUE,
+      'id' => 'date',
     ),
-    'sort' => array(
-      'handler' => 'views_handler_sort_date',
+    'argument' => array(
+      'id' => 'date',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_date',
+      'id' => 'date',
+    ),
+    'sort' => array(
+      'id' => 'date',
     ),
   );
+
   return $data;
 }
