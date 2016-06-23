@@ -42,7 +42,7 @@ class LopdService implements LopdServiceInterface {
    *   The operation being registered.
    */
   public function lopdRegisterOperation($account, $operation) {
-    $this->database->insert('lopd')
+    return $this->database->insert('lopd')
       ->fields(array(
         'uid' => method_exists($account, 'id') ? $account->id() : $account->uid,
         'authname' => method_exists($account, 'getAccountName') ? $account->getAccountName() : $account->name,
@@ -58,7 +58,7 @@ class LopdService implements LopdServiceInterface {
    * @param \Drupal\user\UserInterface $account
    */
   public function lopdRegisterLogin($account) {
-    $this->lopdRegisterOperation($account, self::LOPD_OPERATION_LOGIN);
+    return $this->lopdRegisterOperation($account, self::LOPD_OPERATION_LOGIN);
   }
 
   /**
@@ -67,7 +67,7 @@ class LopdService implements LopdServiceInterface {
    * @param \Drupal\user\UserInterface $account
    */
   public function lopdRegisterLogout($account) {
-    $this->lopdRegisterOperation($account, self::LOPD_OPERATION_LOGOUT);
+    return $this->lopdRegisterOperation($account, self::LOPD_OPERATION_LOGOUT);
   }
 
   /**

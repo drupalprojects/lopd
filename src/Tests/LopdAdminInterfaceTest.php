@@ -7,16 +7,13 @@
 namespace Drupal\lopd\Tests;
 
 use Drupal\simpletest\WebTestBase;
-use Drupal\lopd\Tests\Stub\LopdTestTrait;
-use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Class LopdCronTest
  *
  * @group lopd
  */
-class LopdCronTest extends WebTestBase {
-  use LopdTestTrait;
+class LopdAdminInterfaceTest extends WebTestBase {
 
   /**
    * Modules to enable.
@@ -53,8 +50,7 @@ class LopdCronTest extends WebTestBase {
     $this->normal_user = $this->drupalCreateUser();
   }
 
-
-  public function testDeleteLopdEntriesWithCron() {
+  public function testLopdAdminInterface() {
     // Check access to admin/config/system/lopd
     $this->drupalLogin($this->privileged_user);
     $this->drupalGet('admin/config/system/lopd');
@@ -63,28 +59,12 @@ class LopdCronTest extends WebTestBase {
     $this->assertFieldByName('messages_to_keep', 0, 'The lopd_messages_to_keep
       field is correctly set to 0 as default');
 
-    // Check that lopd_messages_to_keep variable is set correctly:
-    $allowed_values = array(2, 3, 4, 5);
-    foreach ($allowed_values as $value) {
-      $edit = array(
-        'messages_to_keep' => $value,
-      );
-      $this->drupalPostForm('admin/config/system/lopd', $edit, t('Save configuration'));
+    $edit = array(
+      'messages_to_keep' => 2,
+    );
+    $this->drupalPostForm('admin/config/system/lopd', $edit, t('Save configuration'));
 
-      $lopd_settings = $this->config('lopd.settings')->get('messages_to_keep');
-      $this->assertEqual($lopd_settings, $value, 'The messages_to_keep settings is saved correctly');
-
-      // Check the Cron process delete entries:
-      $max_timestamp = strtotime("- $value years");
-      $this->createRandomEntries(15);
-      $this->cronRun();
-      $entries = $this->getLOPDEntries()->fetchAll();
-      foreach ($entries as $entry) {
-        if ($entry->timestamp <= $max_timestamp) {
-          $this->fail(new FormattableMarkup("Cron proccess didn't remove a entry less than @maxtime for @value value",
-            array('@maxtime' => $max_timestamp, '@value' => $value)), 'Lopd');
-        }
-      }
-    }
+    $lopd_settings = $this->config('lopd.settings')->get('messages_to_keep');
+    $this->assertEqual($lopd_settings, 2, 'The messages_to_keep settings is saved correctly');
   }
 }
